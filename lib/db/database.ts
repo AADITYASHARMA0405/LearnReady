@@ -5,6 +5,7 @@
 
 import * as SQLite from 'expo-sqlite';
 import { CREATE_TABLES_SQL, SEED_INSTITUTIONS_SQL, SCHEMA_VERSION } from './schema';
+import { SEED_SUBJECTS_SQL, SEED_MODULES_SQL, SEED_LESSONS_SQL, SEED_QUESTIONS_SQL } from './seed-content';
 
 const DB_NAME = 'learnready.db';
 
@@ -30,6 +31,17 @@ export const getDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
   );
   if (result && result.count === 0) {
     await db.execAsync(SEED_INSTITUTIONS_SQL);
+  }
+
+  // Seed learning content if empty
+  const subjectCount = await db.getFirstAsync<{ count: number }>(
+    'SELECT COUNT(*) as count FROM subjects'
+  );
+  if (subjectCount && subjectCount.count === 0) {
+    await db.execAsync(SEED_SUBJECTS_SQL);
+    await db.execAsync(SEED_MODULES_SQL);
+    await db.execAsync(SEED_LESSONS_SQL);
+    await db.execAsync(SEED_QUESTIONS_SQL);
   }
 
   console.log(`[DB] LearnReady database initialized (v${SCHEMA_VERSION})`);
