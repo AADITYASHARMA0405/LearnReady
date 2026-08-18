@@ -39,3 +39,14 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Screenshots and unnecessary documents
+*.png
+*.jpg
+*.jpeg
+*.mov
+*.mp4
+*.gif
+!assets/
+screenshots/
+docs/
